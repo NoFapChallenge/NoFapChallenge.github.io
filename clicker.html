@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clicker Game</title>
+<style>
+	*{
+		margin: 0;
+		padding: 0;
+		font-family: 'Roboto';
+	}
+	
+body {
+    margin: 0;
+    background-color: #f0f0f0;
+	text-align: center;
+  }
+
+  #clicker-container {
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  #clicker-button {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  #clicker-button.orange {
+    background-color: orange;
+  }
+
+  #clicker-button.green {
+    background-color: green;
+  }
+
+  #image-frame {
+    position: relative;
+    display: inline-block;
+    text-align: center;
+  }
+
+  #animated-image {
+    width: 150px;
+    height: auto;
+    margin: 0;
+	translate: -20px;
+  }
+
+  #background-image {
+    width: 200px;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #margin-container{
+	margin:100px;
+  }
+    #margin-container p{
+	margin:10px;
+	font-size: 24px;
+  }
+  
+</style>
+</head>
+<body>
+<div id="clicker-container">
+  <div id="image-frame">
+	<img id="background-image" src="dick.png">
+    <img id="animated-image" src="hand.png">
+  </div>
+</div>
+<div id="margin-container">
+  <button id="clicker-button">FAP!</button>
+  <p>Licznik: <span id="click-count">0</span></p>
+</div>
+
+<script>
+  const clickerButton = document.getElementById('clicker-button');
+  const clickCountElement = document.getElementById('click-count');
+  const imageFrame = document.getElementById('image-frame');
+  const animatedImage = document.getElementById('animated-image');
+  const backgroundImage = document.getElementById('background-image');
+
+
+  let clickCount = parseInt(getCookie('clickCount')) || 0;
+  updateClickCount();
+  updateBackgroundImage();
+
+  clickerButton.addEventListener('click', () => {
+    clickCount++;
+    updateClickCount();
+    updateBackgroundImage();
+    moveImage();
+    setCookie('clickCount', clickCount, 365);
+  });
+
+  function updateClickCount() {
+    clickCountElement.textContent = clickCount;
+  }
+
+  function updateBackgroundImage() {
+    if (clickCount >= 1000000) {
+		backgroundImage.src = 'dickDiamond.png';
+	} else if (clickCount >= 1000) {
+      backgroundImage.src = 'dickGold.png';
+    } else if (clickCount >= 100) {
+      backgroundImage.src = 'dickSilver.png';
+    }
+  }
+
+  function moveImage() {
+    imageFrame.style.display = 'block';
+    const startPosition = 0;
+    const targetPosition = 20;
+    let currentPosition = startPosition;
+    let direction = 1; 
+    
+    function animate() {
+      currentPosition += direction * 1;
+      animatedImage.style.transform = `translateY(${currentPosition}px)`;
+      
+      if (currentPosition >= targetPosition) {
+        direction = -1;
+      }
+      
+      if (currentPosition <= startPosition) {
+        animatedImage.style.transform = 'translateY(0)';
+        return;
+      }
+      
+      requestAnimationFrame(animate);
+    }
+    
+    animate();
+  }
+
+  function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+  }
+
+  function getCookie(name) {
+    const cookieArr = document.cookie.split(';');
+    for (const cookie of cookieArr) {
+      const [cookieName, cookieValue] = cookie.split('=');
+      if (cookieName.trim() === name) {
+        return cookieValue;
+      }
+    }
+    return null;
+  }
+</script>
+</body>
+</html>
